@@ -13,13 +13,12 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/api/(.*)",
+      "dest": "manage.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "manage.py"
     }
-  ],
-  "functions": {
-    "api": {
-      "handler": "handler.application"
-    }
-  }
+  ]
 }

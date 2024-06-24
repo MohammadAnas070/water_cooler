@@ -1,4 +1,5 @@
 {
+    "version":2,
     "builds": [{
         "src": "watercooler/wsgi.py",
         "use": "@vercel/python",

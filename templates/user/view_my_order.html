@@ -1,0 +1,75 @@
+
+{% extends 'user/common/layout.html'%}
+{% block content %}
+{% load static %}
+    <style>
+        th{
+            text-transform: uppercase;
+            background-color: #252525;
+            color: #fff;
+            text-size-adjust: 30px;
+            text-align: center;
+        }
+        .container-fluid{
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+        td{
+            text-align: center;
+        }
+    </style>
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>Get 24/7 Support</p>
+                        <h1>View My Order</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end breadcrumb section -->
+    
+    <div class="container-fluid">
+        <table cellpadding="20" cellspacing = 2 border="1" align="center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>quantity</th>
+                    <th>order_address</th>
+                    <th>order_date</th>
+                    <th>order_deliver</th>
+                    <th>payments</th>
+                    <th>payment_id</th>
+                    <th>approval</th>
+                    <th>supplier_id</th>
+                    <th>View More</th>
+                    <th>Track Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in orders %}
+                <tr>
+                    <td>{{i.id}}</td>
+                    <td>{{i.quantity}}</td>
+                    <td>{{i.order_address}}</td>
+                    <td>{{i.order_date}}</td>
+                    <td>{{i.order_deliver}}</td>
+                    <td>{{i.payments}}</td>
+                    <td>{{i.payment_id}}</td>
+                    <td>{{i.approval}}</td>
+                    <td>{{i.supplier_id}}</td>
+                    <td><a class="btn btn-warning" href="/user/viewmore/{{i.id}}" style="color:#fff;">View More</a></td>
+                    <td><a class="btn btn-danger" href="/user/track_order/{{i.id}}">Track/History</a></td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+           
+        </table>
+    </div>
+    
+    
+{% endblock %}

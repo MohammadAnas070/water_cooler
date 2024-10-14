@@ -1,0 +1,247 @@
+{% extends 'user/common/layout.html' %}
+{% block content %}
+{% load static %}
+
+<title> Category </title>
+<style>
+.img2 {
+    float: left;
+}
+
+.dob {
+    padding: 10px;
+}
+
+td {
+    color: #000;
+    font-size: 15px;
+}
+
+.img {
+    border-radius: 15px;
+    border-bottom: 3px solid red;
+    height: 220px;
+    width: 350px;
+}
+
+.img:hover {
+    box-shadow: 0px 0px 30px #252525;
+}
+
+table {
+    height: 500px;
+    width: 360px;
+    text-align: justify-all;
+}
+
+body {
+    background-color: whitesmoke;
+}
+
+.categoryWrapperDiv {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.categoryDivStyle {
+    border-radius: 20px;
+    border: 1px solid red;
+    padding: 2rem;
+    margin: 20px; /* Added margin for spacing */
+}
+
+.categoryDivStyle:active {
+    border: 1px solid blue;
+}
+
+.categoryDivStyle:focus {
+    border: 1px solid blue;
+}
+
+body {
+    background: #dcdcdc;
+    margin-top: 20px;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.box-hover {
+    min-height: 210px;
+    position: relative;
+}
+
+.cover-background {
+    position: relative !important;
+    background-size: cover !important;
+    overflow: hidden !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.margin-30px-bottom {
+    margin-bottom: 30px;
+}
+
+.box-hover:before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.76);
+    background: -webkit-linear-gradient(top, transparent, #000 116%);
+    background: linear-gradient(-180deg, transparent, #000 116%);
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.ele {
+    background-image: url("{% static 'user/assets/img/pepsiCo.jpg' %}");
+}
+
+.fur {
+    background-image: url("{% static 'user/assets/img/Coca.jpeg' %}");
+}
+
+.cloth {
+    background-image: url("{% static 'user/assets/img/fizz.avif' %}");
+}
+
+.art {
+    background-image: url("{% static 'user/assets/img/water.webp' %}");
+}
+
+.veh {
+    background-image: url("{% static 'user/assets/img/davat.jpg' %}");
+}
+
+.book {
+    background-image: url("{% static 'user/assets/img/paper.jpeg' %}");
+}
+
+.custom-margin {
+    margin: 20px 90px; /* Top/Bottom: 20px, Left/Right: 90px */
+}
+.carousel-item {
+    display: flex;
+    justify-content: center; /* Center content within carousel item */
+    align-items: center; /* Align content vertically */
+}
+
+.card {
+    margin: 15px; /* Space between cards */
+    width: 100%; /* Make cards full width of column */
+}
+
+.img-fluid {
+    height: 200px; /* Set a fixed height for images */
+    object-fit: cover; /* Cover the entire area */
+    border-radius: 15px; /* Rounded corners */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #000; /* Black background for icons */
+}
+
+.text-center {
+    padding: 10px 0; /* Spacing for text */
+}
+</style>
+
+
+</style>
+<section>
+    <div style="margin-top: 150px;"></div>
+    <div class="custom-margin"> <!-- Removed container -->
+        <div class="text-center margin-40px-bottom">
+            <h3 class="mb-10" style="padding-bottom:20px">Soft Drinks</h3>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 sm-margin-30px-bottom">
+                <div class="h-100">
+                    <a href="/user/single_product/{{1}}" class="card bg-img box-hover cover-background border-0 p-4 h-100 ele">
+                        <div class="mt-auto position-relative z-index-9">
+                            <h5 class="text-white">{{ data1 }}</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="row margin-30px-bottom">
+                    <div class="col-md-4 xs-margin-30px-bottom">
+                        <a href="/user/category_furniture/{{2}}" class="card bg-img box-hover cover-background border-0 p-4 fur">
+                            <div class="mt-auto position-relative z-index-9">
+                                <h5 class="text-white">{{data2}}</h5>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 xs-margin-30px-bottom">
+                        <a href="/user/category_clothes/{{3}}" class="card bg-img box-hover cover-background border-0 p-4 cloth">
+                            <div class="mt-auto position-relative z-index-9">
+                                <h5 class="text-white">{{data3}}</h5>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/user/category_vehicles/{{4}}" class="card bg-img box-hover cover-background border-0 p-4 veh">
+                            <div class="mt-auto position-relative z-index-9">
+                                <h5 class="text-white">{{data4}}</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7 xs-margin-30px-bottom">
+                        <a href="/user/category_design_art/{{5}}" class="card bg-img box-hover cover-background border-0 p-4 art">
+                            <div class="mt-auto position-relative z-index-9">
+                                <h5 class="text-white">FRESH WATER</h5>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-5">
+                        <a href="/user/category_book/{{6}}" class="card bg-img box-hover cover-background border-0 p-4 book">
+                            <div class="mt-auto position-relative z-index-9">
+                                <h5 class="text-white">{{data5}}</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section style="margin:50px;">
+
+    <div style="margin-top: 150px;"></div>
+    
+    <!-- Flexbox container for cards -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+        {% for i in cat %}
+            {% if forloop.counter > 5 %}
+           
+            <div class="card" style="width: 18rem; margin: 20px;">
+                <a href="/user/single_product/{{i.id}}">
+                <img class="card-img-top" style="padding: 5px;" src="media/uploads/{{i.image}}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{i.category_name}}</h5>
+                </div>
+            </a>
+            </div> 
+           
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+
+</center>
+
+<!-- ======= Contact Section=======-->
+
+</div>
+
+{% endblock %}

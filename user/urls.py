@@ -70,5 +70,10 @@ urlpatterns = [
 
     #-----------------------------------------------------------------------
     path('logout', views.logout, name='logout'),
+    
+    
+    
+    
+    path('viewProduct/<int:id>',views.viewProduct,name="viewProduct"),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

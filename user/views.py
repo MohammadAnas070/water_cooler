@@ -546,3 +546,17 @@ def category(request):
     
     context ={'result1':result1, 'categories': categories,'data1':data1,'data2':data2,'data3':data3,'data4':data4,'data5':data5,'cat':cat}
     return render(request,'user/category.html',context)
+
+
+
+
+
+
+
+def viewProduct(request,id):
+    result = SoftDrink.objects.get(pk=id)
+    cat = Product_Category.objects.get(pk=result.category_id)
+    result1 = Suppliers.objects.all()
+    context = {'result':result, 'cat':cat,'result1':result1}
+    
+    return render(request,'user/viewProduct.html',context)

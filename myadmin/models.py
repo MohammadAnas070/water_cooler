@@ -71,21 +71,7 @@ class Inquiry(models.Model):
     class Meta:
         db_table = 'inquiry' 
         
-class Order(models.Model):
-    quantity =models.IntegerField()
-    order_address = models.TextField()
-    order_date = models.DateTimeField(auto_now_add=True)
-    order_deliver = models.DateTimeField()
-    payments = models.CharField(max_length=50)
-    payment_id = models.TextField()
-    user = models.ForeignKey(User, related_name='userid', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='productid', on_delete=models.CASCADE)
-    supplier = models.ForeignKey(Suppliers, related_name='supplierid', on_delete=models.CASCADE)
-    approval = models.IntegerField()
-    track = models.IntegerField()
-    
-    class Meta:
-        db_table = 'order' 
+
 
     
     
@@ -100,13 +86,31 @@ class Product_Category(models.Model):
         
     
 
+
 class SoftDrink(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='softdrinks/')
     size = models.CharField(max_length=50)
     availability = models.BooleanField(default=True)
-    category=models.ForeignKey(Product_Category, related_name='categoryid', on_delete=models.CASCADE)
+    category = models.ForeignKey(Product_Category, related_name='categoryid', on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'softdrink' 
+        db_table = 'softdrink'
+
+
+class Order(models.Model):
+    quantity = models.IntegerField()
+    order_address = models.TextField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    order_deliver = models.DateTimeField()
+    payments = models.CharField(max_length=50)
+    payment_id = models.TextField()
+    user = models.ForeignKey(User, related_name='userid', on_delete=models.CASCADE)
+    softdrink = models.ForeignKey(SoftDrink, related_name='softdrinkid', on_delete=models.CASCADE)  # Corrected name to lowercase 'softdrink'
+    supplier = models.ForeignKey('Suppliers', related_name='supplierid', on_delete=models.CASCADE)
+    approval = models.IntegerField()
+    track = models.IntegerField()
+
+    class Meta:
+        db_table = 'order'

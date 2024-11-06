@@ -17,12 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from myadmin import views
+from .views import GeneratePdf
+
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
     path('Dashboard', views.Dashboard, name='Dashboard'),
+    path('pdf/<str:pdf_type>', GeneratePdf.as_view(), name='generate_pdf'),
     #--------------------------------------------------------------------------------
     path('Add_Category', views.Add_Category, name='Add_Category'),
     path('Store_Product',views.Store_Product,name='Store_Product'),

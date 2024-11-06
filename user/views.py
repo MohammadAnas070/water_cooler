@@ -28,28 +28,54 @@ my_payment_id = None
 client = razorpay.Client(auth=(ROZARPAY_API_KEY, ROZARPAY_API_SE_KEY))
 
 class GeneratePdf(View):
-    def get(self,request,*args,**kwargs):
-        id = request.session['order_id_recepit']
-        result = Order.objects.get(pk=id)
-        product = Product.objects.get(pk = result.product_id)
-        cost = result.quantity*product.price
-        user_info = User.objects.get(pk=result.user_id)
-        user_profile = User_profile.objects.get(user_id = result.user_id)
-        area = user_profile.area
-        
-        city = user_profile.city
-        
-        
-        global my_payment_id
-        global my_order_id
-        
-        my_order_id = None
-        my_payment_id = None
+    def get(self, request, *args, **kwargs):
+        try:
+            # Retrieve the order ID from the session
+            id = request.session['order_id_receipt']
+            print(f"Session Order ID: {id}")  # Log the session ID
+            # Try to get the order using the ID
+            result = Order.objects.get(pk=id)
 
+            # If order is found, fetch the product and user info
+
+            softDrinkDetails = SoftDrink.objects.get(pk=result.softdrink_id)
+            cost = result.quantity * softDrinkDetails.price
+            user_info = User.objects.get(pk=result.user_id)
+            user_profile = User_profile.objects.get(user_id=result.user_id)
+            area = user_profile.area
+            city = user_profile.city
+
+            # Reset the global variables
+            global my_payment_id
+            global my_order_id
+            my_order_id = None
+            my_payment_id = None
+
+            # Prepare context for rendering the PDF
+            context = {
+                'result': result,
+                'product': softDrinkDetails,
+                'cost': cost,
+                'user_info': user_info,
+                'user_profile': user_info,
+                'user_profile': user_profile,
+                'area': area,
+                'city': city
+            }
+
+            # Generate the PDF using the render_to_pdf function
+            pdf = render_to_pdf('user/receipt.html', context)
+            return HttpResponse(pdf, content_type="application/pdf")
         
-        context = {'result':result,'product':product,'cost':cost,'user_info':user_info,'user_profile':user_info,'user_profile':user_profile,'area':area,'city':city}
-        pdf = render_to_pdf('user/receipt.html',context)
-        return HttpResponse(pdf,content_type="application/pdf")
+        except Order.DoesNotExist:
+            # Handle case where no order is found
+            return HttpResponse("Order not found.", status=404)
+        except KeyError:
+            # Handle case where 'order_id_recepit' is not in the session
+            return HttpResponse("No order ID found in session.", status=400)
+        except Exception as e:
+            # Handle any other exceptions
+            return HttpResponse(f"An error occurred: {e}", status=500)
 #--------------------------------------------------------------------
 def Home(request):
     # Assuming Feedback has a ForeignKey to User
@@ -257,11 +283,11 @@ def login_check(request):
         if result1.first_name == "" or result1.is_staff != 0:
             messages.success(request, 'Invalid Username Or Password or You are Not Authorised User !!')
             print('Invalid Username Or Password or You are Not Authorised User')
-            return redirect('/user')
+            return redirect('/user/login')
         if result is None:
             messages.success(request, 'Invalid Username or Password')
             print('Invalid Username or Password')
-            return redirect('/user/')
+            return redirect('/user/login')
         else:
             auth.login(request, result)
             return redirect('/user/Home')
@@ -270,7 +296,7 @@ def login_check(request):
          my_object = None
          messages.success(request, 'Invalid Username or not Found Username')
          print('Invalid Username or You are not Admin')
-         return redirect('/user/')
+         return redirect('/user/login')
 
 
 def user_forget(request):
@@ -414,7 +440,7 @@ def inquiry_store(request):
     return redirect('/user/inquiry')
 #-------------------------------------------------------------
 def viewmore(request,id):
-    result = Product.objects.get(pk=id)
+    result = Order.objects.get(pk=id)
     context = {'result':result}
     return render(request,'user/shop.html',context)
 #-------------------------------------------------------------
@@ -426,32 +452,72 @@ def order_page(request,id):
     context = {'result':result,'result1':result1}
     return render(request,'user/order.html',context)
 
-def order_store(request,id):
+from django.core.exceptions import ObjectDoesNotExist
+def order_store(request, id):
+    # Convert id to integer to avoid errors
+    id = int(id)
+    
+    # Get data from the POST request
     qty = request.POST['qty']
     address = request.POST['address']
     order_receive_date = request.POST['order_rec']
     user_id = request.user.id
     supplier = request.POST['supplier']
     
-    order_details = Order.objects.create(quantity=qty,order_address=address,order_deliver=order_receive_date,payment_id=" ",payments="None",product_id=id,supplier_id=supplier,user_id=user_id,approval=0,track=1)
-    order_id = order_details.id
-    request.session['order_id_recepit']=order_id
+    # Check if the product exists
+    try:
+        product = SoftDrink.objects.get(pk=id)
+    except ObjectDoesNotExist:
+        # Handle the case where the product doesn't exist
+        return HttpResponse("Product does not exist", status=400)
+    
+    # Proceed with creating the order
+    try:
+        order_details = Order.objects.create(
+            quantity=qty,
+            order_address=address,
+            order_deliver=order_receive_date,
+            payment_id=" ",
+            payments="None",
+            softdrink_id=product.id,  # Make sure this is a valid product ID
+            supplier_id=supplier,
+            user_id=user_id,
+            approval=0,
+            track=1
+        )
+        order_id = order_details.id
+        request.session['order_id_receipt'] = order_id
+    except Exception as e:
+        # Handle unexpected errors during order creation
+        return HttpResponse(f"An error occurred while creating the order: {str(e)}", status=500)
+    
+    # Save the order ID to the session
+   
+    
+    # Optionally, store a flag indicating the order was done
     request.session['Order_done'] = True
+    
+    # Redirect to the payment page with the order ID
     redirect_url = f"/user/Payment/{order_id}"
-    return redirect (redirect_url)
+    return redirect(redirect_url)
 #-------------------------------------------------------------
 # def Payment(request):
 #     context={}
 #     return render(request,'user/payment.html',context)
 
 #-------------------------------------------------------------
-def Payment(request,id):
+def Payment(request, id):
     r = Order.objects.get(pk=id)
     qty = r.quantity
-    r1 = Product.objects.get(pk=r.product_id)
+    r1 = SoftDrink.objects.get(pk=r.softdrink_id)
     price = r1.price
-    total_price = qty*price*100
-    total = qty*price
+    total_price = qty * price * 100
+    total = qty * price
+
+    # Convert Decimal to float before including in the JSON payload
+    total_price = float(total_price)
+    total = float(total)
+
     DATA = {
         "amount": total_price,
         "currency": "INR",
@@ -460,17 +526,20 @@ def Payment(request,id):
             "key1": "value3",
             "key2": "value2"
         },
-        "payment_capture":1
+        "payment_capture": 1
     }
+
     payment_order = client.order.create(data=DATA)
     payment_order_id = payment_order['id']
+
     global my_order_id
     global my_payment_id
     my_order_id = id
     my_payment_id = payment_order_id
-    context={'price':price,'qty':qty,'total':total,'amount':DATA['amount'],'api_key':ROZARPAY_API_KEY,'order_id' : payment_order_id}
-    
-    return render(request,'user/payment.html',context)
+
+    context = {'price': price, 'qty': qty, 'total': total, 'amount': DATA['amount'], 'api_key': ROZARPAY_API_KEY, 'order_id': payment_order_id}
+
+    return render(request, 'user/payment.html', context)
 
 @csrf_exempt
 def success(request):
@@ -499,9 +568,9 @@ def view_my_order(request):
     
 def track_order(request,id):
     result = Order.objects.get(pk=id)
-    print(result.product_id)
-    product_id = result.product_id
-    product_info = Product.objects.get(pk=product_id)
+    #print(result.product_id)
+    softdrink_id = result.softdrink_id
+    product_info = SoftDrink.objects.get(pk=softdrink_id)
     
     price = product_info.price
     qty = result.quantity
@@ -546,11 +615,6 @@ def category(request):
     
     context ={'result1':result1, 'categories': categories,'data1':data1,'data2':data2,'data3':data3,'data4':data4,'data5':data5,'cat':cat}
     return render(request,'user/category.html',context)
-
-
-
-
-
 
 
 def viewProduct(request,id):

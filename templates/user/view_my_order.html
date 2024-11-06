@@ -1,4 +1,4 @@
-
+<title> View-my-Order </title>
 {% extends 'user/common/layout.html'%}
 {% block content %}
 {% load static %}
@@ -45,7 +45,7 @@
                     <th>payment_id</th>
                     <th>approval</th>
                     <th>supplier_id</th>
-                    <th>View More</th>
+                    
                     <th>Track Order</th>
                 </tr>
             </thead>
@@ -61,7 +61,7 @@
                     <td>{{i.payment_id}}</td>
                     <td>{{i.approval}}</td>
                     <td>{{i.supplier_id}}</td>
-                    <td><a class="btn btn-warning" href="/user/viewmore/{{i.id}}" style="color:#fff;">View More</a></td>
+                   
                     <td><a class="btn btn-danger" href="/user/track_order/{{i.id}}">Track/History</a></td>
                     
                 </tr>

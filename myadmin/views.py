@@ -1,4 +1,5 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
+from django.views import View
 from myadmin.models import *
 from django.contrib import auth,messages
 from django.core.files.storage import FileSystemStorage
@@ -11,8 +12,59 @@ from django.contrib.auth.models import User
 from django.contrib import auth,messages
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
+from user.utils import render_to_pdf
+from django.db import connection
+from django.templatetags.static import static
+
+
+
 
 # Create your views here.
+
+
+class GeneratePdf(View):
+    def get(self,request,*args,**kwargs):
+        pdf_type = kwargs.get('pdf_type') 
+        logo_url = request.build_absolute_uri(static('user/assets/img/logo-no-background.png'))
+        user = request.user
+        admin_name = user.username
+
+        if pdf_type == 'suppliers':
+            result = Suppliers.objects.all()
+            context = {'result': result ,'logo':logo_url,'adminName':admin_name}
+            template = 'admin/suppliersReport.html'
+
+        elif pdf_type == "users":
+            with connection.cursor() as cursor:
+                cursor.execute('''SELECT auth_user.id, auth_user.first_name, auth_user.last_name, auth_user.username, auth_user.email, auth_user.date_joined,
+                                    user_profile.phone, user_profile.address, user_profile.city FROM auth_user JOIN user_profile ON auth_user.id = user_profile.user_id
+                               WHERE auth_user.is_staff = 0
+                                ''')
+                
+                rows = cursor.fetchall()
+
+                # Map the result to a list of dictionaries
+                result = [
+                    {
+                        "id": row[0],
+                        "first_name": row[1],
+                        "last_name": row[2],
+                        "username": row[3],
+                        "email": row[4],
+                        "date_joined": row[5],
+                        "phone": row[6],
+                        "address": row[7],
+                        "city": row[8],
+                    }
+                    for row in rows
+                ]
+
+            context = {'result': result, 'logo':logo_url,'adminName':admin_name}
+            template = 'admin/usersReport.html'
+
+        pdf = render_to_pdf(template,context)
+        return HttpResponse(pdf,content_type="application/pdf")
+    
 
 def Dashboard(request):
     admin_id = request.user.id

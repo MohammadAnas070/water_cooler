@@ -28,7 +28,7 @@ def manage_order(request):
      
 def order_viewmore(request,id):
     result = Order.objects.get(pk=id)
-    product = Product.objects.get(pk = result.product_id)
+    product = SoftDrink.objects.get(pk = result.softdrink_id)
     cost = result.quantity*product.price
     user_info = User.objects.get(pk=result.user_id)
     user_profile = User_profile.objects.get(user_id = result.user_id)
@@ -45,7 +45,7 @@ def approval(request,id):
     result.approval=1
     result.track=2
     result.save()
-    product = Product.objects.get(pk=result.product_id)
+    product = SoftDrink.objects.get(pk=result.softdrink_id)
     supplier = Suppliers.objects.get(pk=result.supplier_id)
     user = User.objects.get(pk=result.user_id)
     email = user.email

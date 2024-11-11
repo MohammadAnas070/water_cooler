@@ -2,6 +2,33 @@
 {% extends 'user/common/layout.html'%}
 {% block content %}
 {% load static %}
+<style>
+    .bg-box {
+        background-color: #f0f0f0 !important; /* Slightly darker dull white, with !important */
+        box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15), -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .bg-box:hover {
+        transform: translateY(-25px);
+        box-shadow: inset 4px 4px 6px -1px rgba(0, 0, 0, 0.2),
+                    -0.5px -0.5px 0px rgba(255, 255, 255, 1),
+                    0.5px 0.5px 0px rgba(0, 0, 0, 0.15),
+                    0px 12px 10px -10px rgba(0, 0, 0, 0.5);
+        background-color: #e8e8e8; /* Even duller white on hover */
+    }
+
+    .product-image img {
+        background-color: transparent;
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px;
+    }
+</style>
+
+
 
 	<!-- end search area -->
 
@@ -68,7 +95,7 @@
 	<!-- end features list section -->
 
 	<!-- product section -->
-	<div class="product-section mt-150 mb-150">
+	<div class="product-section mt-150 mb-150" style="">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-8 offset-lg-2 text-center">
@@ -80,22 +107,24 @@
 			</div>
 
 			<div class="row">
-				
-				{% for i in product%}
-				
+				{% for i in product %}
 				<div class="col-lg-4 col-md-6 offset-md-3 offset-lg-0 text-center">
-					<div class="single-product-item">
+					<div class="single-product-item bg-box" style="background-color: #fff;">
 						<div class="product-image">
-							<a href="single-product.html"><img src="media/uploads/{{ i.image }}" alt="" height=400></a>
+							<a href="single-product.html">
+								<img src="media/uploads/{{ i.image }}" alt="" height="400">
+							</a>
 						</div>
-						<h3>{{i.productname}}</h3>
-						<p class="product-price"><span>{{i.capacity}} Capacity</span> Rs {{i.price}} </p>
-						<a href="/user/viewmore/{{i.id}}" class="cart-btn"><i class="fas fa-shopping-cart"></i>View More</a>
+						<h3>{{ i.productname }}</h3>
+						<p class="product-price"><span>{{ i.capacity }} Capacity</span> Rs {{ i.price }}</p>
+						<a href="/user/viewmore/{{ i.id }}" class="cart-btn">
+							<i class="fas fa-shopping-cart"></i>View More
+						</a>
 					</div>
 				</div>
-
 				{% endfor %}
 			</div>
+			
 		</div>
 	</div>
 	<!-- end product section -->
